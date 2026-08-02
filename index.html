@@ -14,21 +14,46 @@
             background-color: #0f172a;
             color: #f8fafc;
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            overflow: hidden;
         }
         h1 {
             font-size: clamp(3rem, 8vw, 8rem);
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 2px;
-            background: linear-gradient(135deg, #6366f1, #ec4899);
+            background: linear-gradient(135deg, #6366f1, #ec4899, #10b981, #38bdf8);
+            background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-align: center;
             margin: 0;
+            animation: gradientShift 4s ease infinite;
+            transition: opacity 0.5s ease;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
     </style>
 </head>
 <body>
-    <h1>Under Development</h1>
+    <h1 id="message">Under Development</h1>
+
+    <script>
+        setTimeout(() => {
+            const h1 = document.getElementById('message');
+            h1.style.opacity = '0';
+            setTimeout(() => {
+                h1.innerText = "Why wait? Come back later";
+                h1.style.opacity = '1';
+            }, 500);
+        }, 5000);
+
+        setTimeout(() => {
+            window.close();
+            window.location.href = "about:blank";
+        }, 8000);
+    </script>
 </body>
 </html>
