@@ -2,58 +2,385 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Under Development</title>
-    <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #0f172a;
-            color: #f8fafc;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            overflow: hidden;
-        }
-        h1 {
-            font-size: clamp(3rem, 8vw, 8rem);
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, #6366f1, #ec4899, #10b981, #38bdf8);
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-align: center;
-            margin: 0;
-            animation: gradientShift 4s ease infinite;
-            transition: opacity 0.5s ease;
-        }
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="SudoPlay - Exquisite Interactive Sudoku, Custom Solver, Canvas OCR Image Parser, and Visualizer.">
+    <title>SudoPlay - Interactive Sudoku & Auto Solver</title>
+    
+    <!-- SVG Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%230b0d17'/><circle cx='50' cy='50' r='40' fill='url(%23g)'/><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23ffb703'/><stop offset='100%25' stop-color='%23ff4757'/></linearGradient></defs><text x='50' y='68' font-size='60' font-weight='900' fill='%23ffffff' text-anchor='middle' font-family='sans-serif'>S</text></svg>">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1 id="message">Under Development</h1>
 
-    <script>
-        setTimeout(() => {
-            const h1 = document.getElementById('message');
-            h1.style.opacity = '0';
-            setTimeout(() => {
-                h1.innerText = "Why wait? Come back later";
-                h1.style.opacity = '1';
-            }, 500);
-        }, 5000);
+    <!-- 1. PRELOADER (4 Seconds) -->
+    <div id="preloader">
+        <div class="preloader-grid">
+            <div class="preloader-cell"></div>
+            <div class="preloader-cell"></div>
+            <div class="preloader-cell"></div>
+            <div class="preloader-cell"></div>
+            <div class="preloader-cell"></div>
+            <div class="preloader-cell"></div>
+            <div class="preloader-cell"></div>
+            <div class="preloader-cell"></div>
+            <div class="preloader-cell"></div>
+        </div>
+        <div class="preloader-title">SudoPlay</div>
+        <div class="preloader-sub">Preparing the Grid...</div>
+    </div>
 
-        setTimeout(() => {
-            window.close();
-            window.location.href = "about:blank";
-        }, 8000);
-    </script>
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- 2. UNIFIED FLOATING GLASSMORPHIC PILL NAVBAR (Desktop & Mobile) -->
+    <div class="navbar-wrapper">
+        <nav class="navbar">
+            <a href="#" class="nav-brand" data-view="home-view">
+                <div class="brand-icon">S</div>
+                <div class="brand-name">SUDO<span>PLAY</span></div>
+            </a>
+
+            <ul class="nav-links">
+                <li><a class="nav-link active" data-view="home-view"><span class="nav-icon-sm">🏠</span><span class="nav-text">Home</span></a></li>
+                <li><a class="nav-link" data-view="solver-view"><span class="nav-icon-sm">🎮</span><span class="nav-text">Play & Solve</span></a></li>
+                <!-- <li><a class="nav-link" data-view="auto-solver-view"><span class="nav-icon-sm">🤖</span><span class="nav-text">Auto Solver</span></a></li> -->
+                <li><a class="nav-link" data-view="history-view"><span class="nav-icon-sm">📊</span><span class="nav-text">Stats</span></a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <button class="icon-btn" id="theme-toggle-btn" title="Toggle Light/Dark Theme">🌙</button>
+                <button class="icon-btn" id="sound-toggle-btn" title="Toggle Sound Effects">🔊</button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- 3. HOME PAGE -->
+    <section id="home-view" class="view-section active">
+        <!-- Page 1: Hero Fold -->
+        <div class="hero-fold-1">
+            <div class="hero-grid-2col">
+                <div class="hero-content-left">
+                    <h1 class="hero-title">SUDO<span class="gradient-text">PLAY</span></h1>
+                    <p class="hero-subtitle">An exquisite Sudoku suite featuring instant backtracking algorithms, visual step solvers, and pure canvas digit recognition.</p>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-primary" data-view="solver-view" style="width:auto; padding:12px 28px; font-size:1rem; border-radius:30px;">🎮 Play Sudoku Now</button>
+                    </div>
+                </div>
+
+                <div class="hero-content-right">
+                    <div class="hero-3d-scene" id="hero-3d-scene">
+                        <div class="hero-3d-board" id="hero-3d-grid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scroll-indicator" onclick="document.getElementById('rules-fold').scrollIntoView({behavior: 'smooth'})">
+                <span>Scroll Down</span>
+                <span style="font-size: 1.2rem;">↓</span>
+            </div>
+        </div>
+
+        <!-- Page 2: Rules & Fun Facts -->
+        <div id="rules-fold" class="hero-fold-3">
+            <div class="rules-and-facts-grid">
+                <div class="rules-card">
+                    <h3 style="font-size: 1.8rem; margin-bottom: 12px; color:var(--accent-cyan); text-align: center;">How to Play Sudoku</h3>
+                    <p style="color:var(--text-secondary); margin-bottom: 20px; font-size:1.1rem; text-align: center;">
+                        Fill every cell so that every row, column, and 3x3 box contains digits 1 through 9.
+                    </p>
+                    <div class="demo-caption" id="demo-caption" style="text-align: center; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 15px;">
+                        <p id="demo-text" style="font-size: 1.1rem; margin: 0;"></p>
+                        <button class="btn" id="next-rule-btn" style="width:auto; padding:4px 12px; font-size:0.8rem; border-color:var(--accent-cyan); color:var(--accent-cyan); border-radius:20px;">▶ Next</button>
+                    </div>
+                    <div class="demo-container" id="rules-demo-container">
+                        <div class="demo-side">
+                            <span class="demo-status wrong">WRONG</span>
+                            <div class="demo-board" id="demo-board-wrong"></div>
+                        </div>
+                        <div class="demo-side">
+                            <span class="demo-status correct">CORRECT</span>
+                            <div class="demo-board" id="demo-board-correct"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="facts-card">
+                    <div class="facts-card-header">
+                        <div>
+                            <h3 style="font-size: 1.3rem; color:var(--accent-gold); margin-top:4px;">💡 Sudoku Fun Facts</h3>
+                        </div>
+                        <button class="btn" id="next-fact-btn" style="width:auto; padding:4px 12px; font-size:0.8rem; border-color:var(--accent-gold); color:var(--accent-gold); border-radius:20px;">🎲 Next</button>
+                    </div>
+
+                    <div class="fact-content-box" id="fact-box">
+                        <div class="fact-quote-icon">“</div>
+                        <p id="fact-text" class="fact-text-animated">
+                            Loading fascinating Sudoku fact...
+                        </p>
+                    </div>
+
+                    <div class="fact-progress-bar-wrap">
+                        <div class="fact-progress-bar" id="fact-progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. INTERACTIVE SOLVER & GAME VIEW -->
+    <section id="solver-view" class="view-section">
+        <div class="game-container">
+            <div class="board-wrapper">
+                <!-- Custom Difficulty Selector Pills -->
+                <div class="difficulty-picker" id="difficulty-picker">
+                    <button class="diff-btn" data-diff="beginner">Beginner ♾️</button>
+                    <button class="diff-btn" data-diff="easy">Easy</button>
+                    <button class="diff-btn active" data-diff="medium">Medium</button>
+                    <button class="diff-btn" data-diff="hard">Hard</button>
+                    <button class="diff-btn" data-diff="expert">Expert</button>
+                </div>
+
+                <div class="game-toolbar">
+                    <div class="stat-item">
+                        <span class="stat-label">Timer</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <span class="stat-value cyan" id="timer-display">00:00</span>
+                            <button class="pause-btn" id="pause-timer-btn" title="Pause Game">⏸️</button>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Mistakes</span>
+                        <span class="stat-value rose" id="mistakes-display">0 / 3</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Accuracy</span>
+                        <span class="stat-value gold" id="accuracy-display">100%</span>
+                    </div>
+                </div>
+
+                <!-- 9x9 Sudoku Grid Container -->
+                <div class="grid-relative-wrap">
+                    <div id="interactive-grid" class="sudoku-grid"></div>
+                    
+                    <!-- Pre-Game Setup Overlay -->
+                    <div id="game-start-overlay" class="game-overlay active">
+                        <div class="overlay-icon">🎮</div>
+                        <h3 class="overlay-title">Ready for Sudoku?</h3>
+                        <p style="color:var(--text-secondary); margin-bottom:14px; font-size:0.88rem;">Select your difficulty above and tap start!</p>
+                        <button class="btn btn-primary" id="start-game-btn" style="width:auto; padding:10px 28px; font-size:1rem; border-radius:30px;">🚀 Start Game</button>
+                    </div>
+
+                    <!-- Paused Overlay -->
+                    <div id="paused-overlay" class="game-overlay">
+                        <div class="paused-title">GAME PAUSED</div>
+                        <p style="color:var(--text-secondary); margin-bottom:14px; font-size:0.88rem;">Take a breather! Click below to resume playing.</p>
+                        <button class="btn btn-primary" id="resume-game-btn" style="width:auto; padding:10px 24px;">▶️ Resume</button>
+                    </div>
+                </div>
+
+                <div id="hint-banner-box" class="hint-banner"></div>
+            </div>
+
+            <!-- Controls Panel with Numpad & Action Grid -->
+            <div class="game-controls-panel">
+                <div class="control-card">
+                    <div class="action-grid-compact">
+                        <button class="btn btn-primary" id="new-game-btn">🎮 New Game</button>
+                        <button class="btn btn-gold" id="get-hint-btn">💡 Hint (<span id="hints-count">3</span>)</button>
+                        <button class="btn btn-toggle" id="pencil-btn">✏️ Notes</button>
+                        <button class="btn" id="erase-btn">🧹 Erase</button>
+                        <button class="btn" id="reset-board-btn" style="border-color:var(--accent-gold); color:var(--accent-gold);">🔄 Reset</button>
+                        <button class="btn" id="undo-btn">↩️ Undo</button>
+                    </div>
+
+                    <div style="margin-top: 10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <span class="stat-label">Numpad Input</span>
+                            <span class="stat-label" id="numpad-helper-lbl" style="color:var(--accent-cyan); display:none;">Shows Remaining</span>
+                        </div>
+                        <div class="numpad" id="game-numpad">
+                            <button class="num-btn" data-num="1">1<span class="num-remaining">9</span></button>
+                            <button class="num-btn" data-num="2">2<span class="num-remaining">9</span></button>
+                            <button class="num-btn" data-num="3">3<span class="num-remaining">9</span></button>
+                            <button class="num-btn" data-num="4">4<span class="num-remaining">9</span></button>
+                            <button class="num-btn" data-num="5">5<span class="num-remaining">9</span></button>
+                            <button class="num-btn" data-num="6">6<span class="num-remaining">9</span></button>
+                            <button class="num-btn" data-num="7">7<span class="num-remaining">9</span></button>
+                            <button class="num-btn" data-num="8">8<span class="num-remaining">9</span></button>
+                            <button class="num-btn" data-num="9">9<span class="num-remaining">9</span></button>
+                            <button class="num-btn" data-num="0" style="color:var(--accent-rose);">✕</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-card" style="padding:10px;">
+                    <button class="btn" id="solve-now-btn" style="background:var(--accent-purple); color:#fff; border:none; font-weight:700;">✨ Auto Solve Grid</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. AUTO SOLVER VIEW (HIDDEN) -->
+    <!-- 
+    <section id="auto-solver-view" class="view-section">
+        <div class="auto-solver-container">
+            <div class="section-header">
+                <h2 class="section-title">Full Automatic Sudoku Solver</h2>
+                <p class="section-desc">Select an input option below (Presets, Upload Image, or Paste String) to populate the grid, then click Solve.</p>
+            </div>
+
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="preset-tab">Preset Puzzles</button>
+                <button class="tab-btn" data-tab="upload-tab">Upload Photo (Canvas OCR)</button>
+                <button class="tab-btn" data-tab="string-tab">Paste Grid String</button>
+            </div>
+
+            <div id="upload-tab" class="tab-content" style="display:none;">
+                <div class="upload-zone" id="drop-zone">
+                    <div class="upload-icon">📷</div>
+                    <h3>Drag & Drop Sudoku Image Here</h3>
+                    <p style="color:var(--text-secondary); margin-top:6px; font-size:0.85rem;">or tap to browse from device (JPG, PNG)</p>
+                    <input type="file" id="image-input" accept="image/*" style="display:none;">
+                </div>
+            </div>
+
+            <div id="string-tab" class="tab-content" style="display:none; margin-bottom:20px;">
+                <div class="control-card">
+                    <label class="stat-label" style="margin-bottom:6px; display:block;">Enter 81-character Sudoku string (0 or . for empty):</label>
+                    <input type="text" id="string-input" placeholder="530070000600195000098000060800060003400803001700020006060000280000419000000080079" style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-color); background:var(--bg-secondary); color:var(--text-primary); font-family:var(--font-mono); margin-bottom:10px;">
+                    <button class="btn btn-primary" id="load-string-btn">Load Grid String</button>
+                </div>
+            </div>
+
+            <div id="preset-tab" class="tab-content" style="margin-bottom:20px;">
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="btn" id="load-preset-easy">Easy Preset</button>
+                    <button class="btn" id="load-preset-hard">Hard Preset</button>
+                    <button class="btn" id="load-preset-evil">Expert Preset</button>
+                </div>
+            </div>
+
+            <div class="game-container" style="margin-top:0;">
+                <div class="board-wrapper">
+                    <div id="auto-grid" class="sudoku-grid"></div>
+                </div>
+
+                <div class="game-controls-panel">
+                    <div class="control-card">
+                        <h3 style="margin-bottom:12px; font-size:1.1rem;">Solver Actions</h3>
+                        <button class="btn btn-primary" id="auto-instant-btn" style="margin-bottom:8px;">⚡ Instant Solve (< 5ms)</button>
+                        <button class="btn btn-gold" id="auto-visual-btn" style="margin-bottom:8px;">🎬 Start Step Visualizer</button>
+                        <button class="btn" id="auto-stop-btn" style="margin-bottom:8px; display:none; background:var(--accent-rose); color:#fff; border:none;">⏹️ Stop Visualizer</button>
+                        <button class="btn" id="auto-clear-btn">🧹 Clear Grid</button>
+
+                        <div class="speed-slider-wrap">
+                            <span class="stat-label">Speed</span>
+                            <input type="range" id="speed-slider" min="1" max="200" value="30">
+                            <span class="stat-value cyan" id="speed-val" style="font-size:0.85rem;">30ms</span>
+                        </div>
+                    </div>
+
+                    <div class="control-card" id="auto-stats-card">
+                        <h4 style="margin-bottom:8px; color:var(--accent-cyan);">Execution Metrics</h4>
+                        <div class="stat-item" style="align-items:flex-start; margin-bottom:6px;">
+                            <span class="stat-label">Execution Time</span>
+                            <span class="stat-value" id="auto-time-val">0 ms</span>
+                        </div>
+                        <div class="stat-item" style="align-items:flex-start;">
+                            <span class="stat-label">Backtracking Steps</span>
+                            <span class="stat-value" id="auto-steps-val">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    -->
+
+    <!-- 6. HISTORY & STATS VIEW -->
+    <section id="history-view" class="view-section">
+        <div class="auto-solver-container">
+            <div class="section-header">
+                <h2 class="section-title">Player History & Statistics</h2>
+                <p class="section-desc">Track your lifetime performance metrics stored locally in your browser.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stats-card">
+                    <div class="stats-card-val" id="stat-total-played">0</div>
+                    <div class="stats-card-lbl">Total Games</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-card-val" id="stat-total-solved">0</div>
+                    <div class="stats-card-lbl">Solved Puzzles</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-card-val" id="stat-win-rate">0%</div>
+                    <div class="stats-card-lbl">Win Rate</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-card-val" id="stat-best-time">--:--</div>
+                    <div class="stats-card-lbl">Best Time (Medium)</div>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                <h3>Recent Games Log</h3>
+                <button class="btn" id="clear-history-btn" style="width:auto; padding:4px 12px; font-size:0.8rem; color:var(--accent-rose); border-color:rgba(255,71,87,0.3);">Clear History</button>
+            </div>
+
+            <div class="history-table-wrap">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Difficulty</th>
+                            <th>Time Spent</th>
+                            <th>Mistakes</th>
+                            <th>Accuracy</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table-body">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- GAME OVER / VICTORY MODAL -->
+    <div id="game-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div id="modal-icon" style="font-size:3rem; margin-bottom:8px;">🎉</div>
+            <h2 class="modal-title gradient-text" id="modal-title">Puzzle Completed!</h2>
+            <p style="color:var(--text-secondary); margin-bottom:16px; font-size:0.9rem;" id="modal-desc">Outstanding job! You solved the Sudoku puzzle cleanly.</p>
+            
+            <div style="display:flex; justify-content:space-around; background:var(--bg-primary); padding:12px; border-radius:var(--radius-md); margin-bottom:18px;">
+                <div>
+                    <div class="stat-label">Final Time</div>
+                    <div class="stat-value cyan" id="modal-time-val">02:14</div>
+                </div>
+                <div>
+                    <div class="stat-label">Accuracy</div>
+                    <div class="stat-value gold" id="modal-accuracy-val">100%</div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="modal-action-btn">Play Another Game</button>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="js/sudoku-engine.js"></script>
+    <script src="js/ocr-parser.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
